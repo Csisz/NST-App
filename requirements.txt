@@ -1,5 +1,13 @@
-tensorflow==2.13.0
-tensorflow_hub==0.13.0
-streamlit
-Pillow
+tensorflow
 numpy
+pillow
+matplotlib
+opencv-python
+torch
+torchvision
+diffusers
+transformers
+accelerate
+safetensors
+ftfy
+streamlit

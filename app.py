@@ -1,32 +1,26 @@
 import streamlit as st
-import tensorflow as tf
-import tensorflow_hub as hub
-import numpy as np
 from PIL import Image
 import io
 from layers import InstanceNormalization
 
 
-st.title("🎨 Neural Style Transfer App")
+st.title("Neural Style Transfer")
 
-# Upload images
-content_img = st.file_uploader("Upload your content image", type=["jpg", "png"])
-style_img = st.file_uploader("Upload your style image", type=["jpg", "png"])
+# Upload image
+uploaded_image = st.file_uploader("Upload a content image", type=["jpg", "png", "jpeg"])
+if uploaded_image:
+    image = Image.open(uploaded_image).convert("RGB")
+    st.image(image, caption="Original Image", use_column_width=True)
 
-def load_and_process_image(img_file):
-    img = Image.open(img_file).convert("RGB").resize((256, 256))
-    img = np.array(img) / 255.0
-    return tf.constant(img[np.newaxis, ...], dtype=tf.float32)
+    # Preprocess image
+    img_array = np.array(image.resize((256, 256))).astype(np.float32) / 255.0
+    content = tf.convert_to_tensor(img_array)[tf.newaxis, ...]
 
-if content_img and style_img:
-    content = load_and_process_image(content_img)
-    style = load_and_process_image(style_img)
+    # Load your model
+    model = tf.keras.models.load_model("style_transfer_full_model.h5", custom_objects={"InstanceNormalization": InstanceNormalization})
 
-    # Load model
-    with st.spinner("Applying style..."):
-        model = hub.load('https://tfhub.dev/google/magenta/arbitrary-image-stylization-v1-256/2')
-        stylized_image = model(content, style)[0]
+    # Run inference
+    stylized = model(content)[0].numpy()
+    stylized = np.clip(stylized * 255, 0, 255).astype(np.uint8)
 
-    # Convert and display
-    output_img = tf.clip_by_value(stylized_image[0] * 255.0, 0, 255).numpy().astype(np.uint8)
-    st.image(output_img, caption="Stylized Output", use_column_width=True)
+    st.image(stylized, caption="Stylized Image", use_column_width=True)
