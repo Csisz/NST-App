@@ -4,6 +4,8 @@ import tensorflow_hub as hub
 import numpy as np
 from PIL import Image
 import io
+from layers import InstanceNormalization
+
 
 st.title("🎨 Neural Style Transfer App")
 
