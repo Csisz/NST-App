@@ -1,6 +1,13 @@
-streamlit
-tensorflow>=2.11.0
+tensorflow
 numpy
+pillow
 matplotlib
-Pillow
 opencv-python
+torch
+torchvision
+diffusers
+transformers
+accelerate
+safetensors
+ftfy
+streamlit
